@@ -335,15 +335,21 @@ section {
 li {
   font-size: 24px;
 }
+li li {
+  font-size: 20px;
+}
 </style>
 # References
 1. GPT best parctices - OpenAI API: https://platform.openai.com/docs/guides/gpt-best-practices/strategy-test-changes-systematically
 2. Prompt engineering techniques on Azure: https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/advanced-prompt-engineering?pivots=programming-language-chat-completions#system-message
 3. ChatGPT Prompt Engineering for Developers on DeepLearning: https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/1/introduction
 4. "State of GPT" presentation by Andrej Karpthy on Microsoft Build 2023: https://www.youtube.com/watch?v=bZQun8Y4L2A
-
-- Generate PPT from Markdown using Marp: https://marpit.marp.app/markdown
+- Other Tools:
+  - Generate PPT from Markdown using Marp: https://marpit.marp.app/markdown
+  - Jupyter Notebook:
+    - Link to the examples: https://github.com/xhywxtt/prompt-engineering-for-developers/tree/main/Final%20Presentation/Final%20Notebook
 <!--
 以上是这次分享的参考文献，主要参考了OpenAI官网和Azure上的文档，DeepLearning上的课程，以及Microsoft 2023上关于GPT现状的演讲。
 另外，我用了Marp这个工具由Markdown自动生成PPT，可以专注于内容，不用被调格式困扰（这个工具也有一个缺点就是主题很少，且生成的ppt文字无法再编辑）
+/dʒuːˈpaɪtə:/
 -->
