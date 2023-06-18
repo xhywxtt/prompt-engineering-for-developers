@@ -40,7 +40,11 @@ Haoyue Xue
 - Background
 - Principle 1: Write clear and specific instructions
 - Principle 2: Give the model time to “think”
-<!--TODO xhy-->
+- Principle 3: Reducing Hallucinations
+- Principle 4: Ask for success
+- Principle 5: Use external tools
+- Iterative Prompt Develelopment
+- References
 ---
 # Background
 - GPT-3, GPT-3.5, and GPT-4 models from OpenAI are prompt-based.
@@ -84,6 +88,7 @@ Summarize the meeting notes.|Summarize the meeting notes in a single paragraph. 
 策略1：在查询中包含详细信息以获取更相关的答案
 - 为了获得高度相关的回复，最好确保提供了重要的详细信息。否则，模型将会进行猜测。
 - 这里有一些对比的例子【演示：例1、例2：斐Fěi波那契数列】
+- 在看例子之前简单看一下，我这里用的是Azure上申请的GPT3.5的model，提前把key配置在环境变量里了。调用模型的时候除了messages和engine以外，还有一个temperature温度参数[A2.12]，改变温度参数会改变模型的输出。 温度是一个正数，通常在0.1到1.0之间。较低的温度值（接近0.0）会使生成的文本更加确定性、保守、具体，较高的温度值（接近1.0）会增加随机性，使生成的文本更加随机、多样化，产生更多发散的答案。
 -->
 
 ---
@@ -226,39 +231,119 @@ section {
 - LLM只是对token进行抽样，所以更像是System 1，而我们上述各种策略，相当于按照人类System 2的思考方式来引导它。
 -->
 ---
-# 应对模型编造虚假知识（幻觉）
-## Tactic 1: 提供一些正确的资料给他
-<!---->[W2 3.1][G2.1][A2.13][Y7.6]
-## Tactic 2: 先要求模型找到文本中的任何相关引用，然后要求它使用这些引用来回答问题
-<!---->[W2 3.2][G2.2]
+# Principle 3: Reducing Hallucinations
+<style scoped>
+section {
+  justify-content: center;
+}
+</style>
+- Model Limitations
+  - Hallucinations: Makes statements that sound plausible but are not true
+- Reducing Hallucinations: Provide reference text
+## Tactic 1 : Instruct the model to answer using a reference text
+## Tactic 2 : Instruct the model to answer with citations from a reference text
+<!--
+模型的局限性之一是幻觉，即他偶尔会生成一些看似真实，实则编造的知识。
+这是因为模型在训练过程中接触了大量的知识，它并没有完全记住所见的信息，因此它并不很清楚自己知识的边界。这意味着它可能会尝试回答有关晦涩主题的问题，并编造听起来合理但实际上并不正确的答案。
+【演示：例1：编造一个假的产品名字，模型会一本正经地告诉我们编造的知识。】
+<!--[W2 3.1][G2.1][W2 3.2][G2.2]
+策略一：提供一些正确的资料给他，要求模型使用参考文本回答
+策略二：要求模型从参考文本中引用答案
+【演示：例2：提供文档，回答问题，给出引用】
+-->
 
 ---
-# 不想成功，只想模仿，需要要求它成功[Y5]
-## Tactic 1: 原因：训练集中有不同质量的数据。
-<!---->
-## Tactic 2: prompt中明确包含be sure we have the right answer
-<!---->
-## Tactic 3: 要求模型采用某个角色（系统消息）
-<!---->[W2 5(聊天机器人--系统角色)][A2.1]
-callback: 'role':'system'前面的例子中有涉及过
+# Principle 4: Ask for success
+- LLMs don't want to succeed.
+- They want to imitate training sets with a spectrum of performance qualities.
+- You want to succeed, and you should ask for it.
+
+<!--[Y5]
+- LLM 有种不想成功的心理怪癖。它们只是想模仿。如果你想成功，你应该要求它成功。
+- 当 Transformer 被训练时，它们的训练集中有不同质量的数据。
+  - 例如，一些物理问题，可能有一个学生的解决方案完全错误，但也可能有一个非常正确的专家答案。
+  - Transformer无法区分它们之间的区别——它们知道低质量解决方案和高质量解决方案，但默认情况下，它们想要模仿所有这些，因为它们只是接受过语言建模方面的训练。
+-->
+---
+## Tactic 1: Tell GPT "Be sure we have the right answer"
+<!--
+策略一：告诉GPT，确保得到正确的答案
+这实际上使Transformer工作得更好，因为Transformer现在不必在低质量解决方案上对冲其概率质量
+-->
+## Tactic 2: Tell GPT "You are xxx (some role)"
+- Ex. You are a leading expert on this ptpic. Pretend you have IQ 120
+- System message
+  - Prime the model with context, instructions
+  - Describe the assistant’s personality
+  - Define what the model should and shouldn’t answer
+  - Define the format of model responses.
+<!--
+策略二：要求模型采用某个角色[A2.1]
+- 比如可以和GPT说“你是一个某领域的专家，智商120”。不要试图要求太多的IQ，因为如果你要求 400 的IQ，你可能会在数据分布之外；或者更糟糕的是，你可能会在一些科幻的数据分布中，它会开始 进行一些科幻角色扮演，或类似的事情。
+- 注意这里其实可以用“系统”这个角色。
+之前的例子中有过这种，比如原则一策略2中的You are an AI assistant that helps people find information.
+系统消息包含在提示的开头，用于为模型提供上下文、说明或与用例相关的其他信息。 可以使用系统消息来描述助手的个性，定义模型应回答和不应回答的内容，以及定义模型响应的格式。
+-->
 
 ---
-# 使用外部工具
-## Tactic 1: 使用代码执行执行更准确的计算或调用外部 API
-<!---->[G5.1][Y6]
-## Tactic 2: Transformers may not know what they don't know，需要明确告诉“你不擅长。。”
-<!---->
+# Principle 5: Use external tools
+## Tactic 1: Use external tools to perform more accurate calculations
+- Code executation
+- External APIs
+- ChatGPT plugins
+![bg right contain](image-3.png)
+<!--
+策略一：用外部工具执行精确计算
+- 由于GPT不能独立准确地执行算术或长时间的计算。这种情况，有几个不同的方法
+1. 代码执行 2. 调用外部 API 3. 使用ChatGPT的插件，如图所示ChatGPT提供了很多插件，其中包括计算器插件（不过现在貌似只有ChatGPT plus会员才能用，已经过了可以申请加入waitlist的阶段了，我也看了Azure上貌似没有这个，大家有更多信息也可以帮忙补充下）
+-->
 ---
-# 迭代优化[W2 4][W3 2.2]
-## Tactic 1: 例子
-<!---->
-## Tactic 2: 【PPT】迭代图
-<!---->
+<!--[G5.1][Y6]-->
+## Tactic 2: Tell GPT what they are not good at
+"You are not very good at mental arthmetic. Whenever you need to do very large number addition, multiplication, or whatever, instead, use this calculater. Here's how you use the calculater: you use this token, combination, etc."
+
+    - They don't know what they don't know, they just imitate the next token
+    - They don't know what they are good at or not, they just imitate the next token.
+<!--策略二：明确告诉GPT他们不擅长什么
+例如：“你的心算不太好。每当您需要进行大数加法、乘法或其他操作时，请使用此计算器。以下是您如何使用计算器。使用这个标记组合，等等。”
+这里的原因前面讲LLM text generation的时候提到过：他们不知道他们不知道什么，他们不知道他们不擅长什么
+-->
 ---
-# 其他
-## Tactic 1: 温度
-<!---->[A2.12]
-## Tactic 2: Uses cases(Limitations and Recommendations)
-<!---->[Y11]
+# Iterative Prompt Develelopment
+![bg left contain](image-4.png)
+- Prompt guidelines
+  - Give clear and specific prompt
+  - Analyze why result does not give desired output
+  - Refine the idea and prompt
+  - Repeat ...
+<!--[W2 4]
+【演示：用Final Notebook 2
+任务：从一个椅子的产品说明书生成一份是说明书，用于帮助营销团队为在线零售网站撰写营销式描述
+问题一：生成文本太长
+解决：通过要求它限制生成文本长度来解决这一问题
+问题二：文本关注在错误的细节上，这个网站并不是直接向消费者销售，它实际上旨在向家具零售商销售家具，他们会更关心椅子的技术细节和材料。
+解决：要求它专注于与目标受众（家具零售商）相关的方面。
+问题三：需要一个表格形式的描述，因为最终要展示在网站上
+解决：要求它将所有内容格式化为可以在网页使用的 HTML。
+】
+- 一般情况下，都无法在第一次尝试时，就想到最准确的prompt，但这没关系。只要有一个好的迭代过程，能让prompt对任务实现效果越来越好就可以。
+- 迭代图：当你在写提示时，你有一个关于你想做什么的想法，然后你就可以初步尝试编写一个清晰具体的prmopt，然后运行它观察结果，如果效果不够好，就应该基于上面讲过的原则，弄清楚为什么。然后完善prompt，多次循环上述过程，直到最终得到适合的prompt。
+-->
+
 ---
-# 参考资料
+<style scoped>
+li {
+  font-size: 24px;
+}
+</style>
+# References
+1. GPT best parctices - OpenAI API: https://platform.openai.com/docs/guides/gpt-best-practices/strategy-test-changes-systematically
+2. Prompt engineering techniques on Azure: https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/advanced-prompt-engineering?pivots=programming-language-chat-completions#system-message
+3. ChatGPT Prompt Engineering for Developers on DeepLearning: https://learn.deeplearning.ai/chatgpt-prompt-eng/lesson/1/introduction
+4. "State of GPT" presentation by Andrej Karpthy on Microsoft Build 2023: https://www.youtube.com/watch?v=bZQun8Y4L2A
+
+- Generate PPT from Markdown using Marp: https://marpit.marp.app/markdown
+<!--
+以上是这次分享的参考文献，主要参考了OpenAI官网和Azure上的文档，DeepLearning上的课程，以及Microsoft 2023上关于GPT现状的演讲。
+另外，我用了Marp这个工具由Markdown自动生成PPT，可以专注于内容，不用被调格式困扰（这个工具也有一个缺点就是主题很少，且生成的ppt文字无法再编辑）
+-->
