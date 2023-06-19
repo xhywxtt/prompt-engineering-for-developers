@@ -92,7 +92,7 @@ Summarize the meeting notes.|Summarize the meeting notes in a single paragraph. 
 -->
 
 ---
-## Tactic 2: # Principle 1: Write clear and specific instructions
+## Tactic 2: Write clear and specific instructions
 - Delimiters can be anything like: ```, """, < >, <tag> </tag>
 - Help avoid prompt injections
 ![w:600](image.png)
