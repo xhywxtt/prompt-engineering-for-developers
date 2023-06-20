@@ -350,6 +350,6 @@ li li {
     - Link to the examples: https://github.com/xhywxtt/prompt-engineering-for-developers/tree/main/Final%20Presentation/Final%20Notebook
 <!--
 以上是这次分享的参考文献，主要参考了OpenAI官网和Azure上的文档，DeepLearning上的课程，以及Microsoft 2023上关于GPT现状的演讲。
-另外，我用了Marp这个工具由Markdown自动生成PPT，可以专注于内容，不用被调格式困扰（这个工具也有一个缺点就是主题很少，且生成的ppt文字无法再编辑）
+另外，我用了Marp这个工具由Markdown自动生成PPT，有几个好处，1是专注内容 2是一份内容可以用于多处，比如直接生成博客（我这份内容在github上应该就可以直接看到）3 方便用ChatGPT批量处理（这个工具也有一个缺点就是主题很少，且生成的ppt文字无法再编辑）
 /dʒuːˈpaɪtə:/
 -->
